@@ -1,5 +1,12 @@
 import {GraphQLClient} from "graphql-request";
-import {createProjectMutation, createUserMutation, getProjectByIdQuery, getUserQuery, projectsQuery} from "@/graphql";
+import {
+    createProjectMutation,
+    createUserMutation,
+    getProjectByIdQuery,
+    getProjectsOfUserQuery,
+    getUserQuery,
+    projectsQuery
+} from "@/graphql";
 import {ProjectForm} from "@/common.types";
 import fetch from "cross-fetch";
 
@@ -77,4 +84,9 @@ export const fetchAllProjects = async (category?: string, endcursor?: string) =>
 export const getProjectDetails = (id:string)=>{
     client.setHeader('x-api-key', apiKey);
     return makeGraphQLRequest(getProjectByIdQuery, {id});
+}
+
+export const getUserProjects = (id:string,last?:number)=>{
+    client.setHeader('x-api-key', apiKey);
+    return makeGraphQLRequest(getProjectsOfUserQuery, {id,last});
 }
