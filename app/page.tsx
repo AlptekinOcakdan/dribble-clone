@@ -2,6 +2,7 @@ import {fetchAllProjects} from "@/lib/actions";
 import {ProjectInterface} from "@/common.types";
 import React from "react";
 import ProjectCard from "@/components/ProjectCard";
+import Categories from "@/components/Categories";
 
 type ProjectSearch = {
     projectSearch: {
@@ -30,7 +31,7 @@ const Home = async () => {
 
     return (
         <section className="flex-start flex-col paddings mb-16">
-            <h1>Categories</h1>
+            <Categories/>
             <section className="projects-grid">
                 {projectsToDisplay.map(({node}: { node: ProjectInterface }) => (
                     <ProjectCard key={node?.id} id={node?.id} image={node?.image} title={node?.title}
