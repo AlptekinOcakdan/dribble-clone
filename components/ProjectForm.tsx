@@ -1,14 +1,13 @@
 "use client"
-import React, {useState} from 'react';
-import {ProjectInterface, SessionInterface} from "@/common.types";
-import {ChangeEvent} from "preact/compat";
 import Image from "next/image";
-import FormField from "@/components/FormField";
-import {categoryFilters} from "@/constants";
-import CustomMenu from "@/components/CustomMenu";
-import Button from "@/components/Button";
-import {createNewProject, fetchToken, updateProject} from "@/lib/actions";
+import React, {ChangeEvent, FormEvent, useState} from 'react';
+import {FormState, ProjectInterface, SessionInterface} from "@/common.types";
 import {useRouter} from "next/navigation";
+import FormField from "@/components/FormField";
+import Button from "@/components/Button";
+import CustomMenu from "@/components/CustomMenu";
+import {categoryFilters} from "@/constants";
+import {createNewProject, fetchToken, updateProject} from "@/lib/actions";
 
 type Props = {
     type: string;
@@ -19,48 +18,6 @@ type Props = {
 const ProjectForm = ({type, session, project}: Props) => {
     const router = useRouter();
 
-    const handleFormSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        const {token} = await fetchToken();
-        try {
-            if (type === 'create') {
-                await createNewProject(form, session?.user?.id, token)
-                router.push('/');
-            }
-
-            if (type === 'edit'){
-                await updateProject(form,project?.id as string,token);
-
-                router.push('/');
-            }
-        } catch (error) {
-            console.log(error);
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-    const handleChangeImage = (e: ChangeEvent<HTMLInputElement>) => {
-        e.preventDefault();
-        const file = (e.target as HTMLInputElement)?.files?.[0];
-        if (!file) return;
-        if (!file.type.includes('image')) {
-            return alert('Please upload an image file');
-        }
-        const reader = new FileReader();
-
-        reader.readAsDataURL(file);
-
-        reader.onload = () => {
-            const result = reader.result as string;
-            handleStateChange('image', result);
-        };
-    };
-
-
-    const handleStateChange = (fieldName: string, value: string) => {
-        setForm((prevState) => ({...prevState, [fieldName]: value}))
-    }
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [form, setForm] = useState({
         title: project?.title || '',
@@ -70,14 +27,56 @@ const ProjectForm = ({type, session, project}: Props) => {
         githubUrl: project?.githubUrl || '',
         category: project?.category || '',
     })
+    const handleStateChange = (fieldName: keyof FormState, value: string) => {
+        setForm((prevForm) => ({...prevForm, [fieldName]: value}));
+    };
+    const handleChangeImage = (e: ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        const file = e.target.files?.[0];
+        if (!file) return;
+        if (!file.type.includes('image')) {
+            return alert('Please upload an image file');
+        }
+
+        const reader = new FileReader();
+
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            const result = reader.result as string;
+            handleStateChange('image', result);
+        };
+
+
+    };
+    const handleFormSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        const {token} = await fetchToken();
+        try {
+            if (type === 'create') {
+                await createNewProject(form, session?.user?.id, token)
+                router.push('/');
+            }
+
+            if (type === 'edit') {
+                await updateProject(form, project?.id as string, token);
+
+                router.push('/');
+            }
+        } catch (error) {
+            alert(`Failed to ${type === "create" ? "create" : "edit"} a project. Try again!`);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
     return (
         <form onSubmit={handleFormSubmit} className="flexStart form">
             <div className="flexStart form_image-container">
                 <label htmlFor="poster" className="flexCenter form_image-label">
                     {!form.image && 'Choose a poster for your project'}
                 </label>
-                <input id="image" type="file" accept="image/*" required={type === 'create'} className="form_image-input"
-                       onChange={handleChangeImage}/>
+                <input id="image" type="file" accept="image/*" required={type === "create"} className="form_image-input"
+                       onChange={(e) => handleChangeImage(e)}/>
                 {form.image && (
                     <Image src={form?.image} className="sm:p-10 object-contain z-20" alt="Project poster" fill/>
                 )}
