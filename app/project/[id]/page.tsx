@@ -4,10 +4,9 @@ import Link from "next/link"
 import {getCurrentUser} from "@/lib/session"
 import {getProjectDetails} from "@/lib/actions"
 import Modal from "@/components/Modal"
-// import ProjectActions from "@/components/ProjectActions"
+import ProjectActions from "@/components/ProjectActions";
 import RelatedProjects from "@/components/RelatedProjects";
 import {ProjectInterface} from "@/common.types"
-import ProjectActions from "@/components/ProjectActions";
 
 
 const Project = async ({params: {id}}: { params: { id: string } }) => {
@@ -18,9 +17,9 @@ const Project = async ({params: {id}}: { params: { id: string } }) => {
         <p className="no-result-text">Failed to fetch project info</p>
     )
 
-    const projectDetails = result?.project
+    const projectDetails = result?.project;
 
-    const renderLink = () => `/profile/${projectDetails?.createdBy?.id}`
+    const renderLink = () => `/profile/${projectDetails?.createdBy?.id}`;
 
     return (
         <Modal>

@@ -17,14 +17,18 @@ export const authOptions: NextAuthOptions = {
     ],
     jwt: {
         encode: ({secret, token}) => {
-            return jsonwebtoken.sign({
-                ...token,
-                iss: 'grafbase',
-                exp: Math.floor(Date.now() / 1000) + 60 * 60
-            }, secret);
+            const encodedToken = jsonwebtoken.sign(
+                {
+                    ...token,
+                    iss: "grafbase",
+                    exp: Math.floor(Date.now() / 1000) + 60 * 60,
+                }, secret);
+
+            return encodedToken;
         },
         decode: async ({secret, token}) => {
-            return jsonwebtoken.verify(token!, secret) as JWT;
+            const decodedToken = jsonwebtoken.verify(token!, secret);
+            return decodedToken as JWT;
         }
     },
     theme: {
@@ -36,15 +40,17 @@ export const authOptions: NextAuthOptions = {
             const email = session?.user?.email as string;
             try {
                 const data = await getUser(email) as { user?: UserProfile }
-                return {
+                const newSession = {
                     ...session,
                     user: {
                         ...session.user,
-                        ...data?.user
-                    }
+                        ...data?.user,
+                    },
                 };
-            } catch (error) {
-                console.log('Error retrieving user data', error);
+
+                return newSession;
+            } catch (error: any) {
+                console.log('Error retrieving user data', error.message);
                 return session;
             }
         },
@@ -55,8 +61,8 @@ export const authOptions: NextAuthOptions = {
                     await createUser(user.name as string, user.email as string, user.image as string);
                 }
                 return true;
-            } catch (e: any) {
-                console.log(e);
+            } catch (error: any) {
+                console.log("Error checking if user exists: ", error.message);
                 return false;
             }
         }
@@ -64,5 +70,7 @@ export const authOptions: NextAuthOptions = {
 }
 
 export async function getCurrentUser() {
-    return await getServerSession(authOptions) as SessionInterface;
+    const session = await getServerSession(authOptions) as SessionInterface;
+
+    return session;
 }
