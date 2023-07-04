@@ -1,6 +1,5 @@
 import {fetchAllProjects} from "@/lib/actions";
 import {ProjectInterface} from "@/common.types";
-import React from "react";
 import ProjectCard from "@/components/ProjectCard";
 import Categories from "@/components/Categories";
 import LoadMore from "@/components/LoadMore";
