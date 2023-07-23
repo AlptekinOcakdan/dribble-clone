@@ -1,12 +1,12 @@
-import {getServerSession} from "next-auth/next";
-import {NextAuthOptions, User} from "next-auth";
-import {AdapterUser} from "next-auth/adapters";
+import { getServerSession } from "next-auth/next";
+import { NextAuthOptions, User } from "next-auth";
+import { AdapterUser } from "next-auth/adapters";
 import GoogleProvider from "next-auth/providers/google";
 import jsonwebtoken from 'jsonwebtoken'
-import {JWT} from "next-auth/jwt";
+import { JWT } from "next-auth/jwt";
 
-import {createUser, getUser} from "./actions";
-import {SessionInterface, UserProfile} from "@/common.types";
+import { createUser, getUser } from "./actions";
+import { SessionInterface, UserProfile } from "@/common.types";
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -16,8 +16,8 @@ export const authOptions: NextAuthOptions = {
         }),
     ],
     jwt: {
-        encode: ({secret, token}) => {
-            return jsonwebtoken.sign(
+        encode: ({ secret, token }) => {
+            const encodedToken = jsonwebtoken.sign(
                 {
                     ...token,
                     iss: "grafbase",
@@ -25,8 +25,10 @@ export const authOptions: NextAuthOptions = {
                 },
                 secret
             );
+
+            return encodedToken;
         },
-        decode: async ({secret, token}) => {
+        decode: async ({ secret, token }) => {
             const decodedToken = jsonwebtoken.verify(token!, secret);
             return decodedToken as JWT;
         },
@@ -36,25 +38,27 @@ export const authOptions: NextAuthOptions = {
         logo: "/logo.svg",
     },
     callbacks: {
-        async session({session}) {
+        async session({ session }) {
             const email = session?.user?.email as string;
 
             try {
                 const data = await getUser(email) as { user?: UserProfile }
 
-                return {
+                const newSession = {
                     ...session,
                     user: {
                         ...session.user,
                         ...data?.user,
                     },
                 };
+
+                return newSession;
             } catch (error: any) {
                 console.error("Error retrieving user data: ", error.message);
                 return session;
             }
         },
-        async signIn({user}: {
+        async signIn({ user }: {
             user: AdapterUser | User
         }) {
             try {
@@ -74,5 +78,7 @@ export const authOptions: NextAuthOptions = {
 };
 
 export async function getCurrentUser() {
-    return await getServerSession(authOptions) as SessionInterface;
+    const session = await getServerSession(authOptions) as SessionInterface;
+
+    return session;
 }
