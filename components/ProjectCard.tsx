@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
     id: string;
@@ -14,7 +14,7 @@ type Props = {
 };
 
 
-const ProjectCard = ({id, image, title, name, avatarUrl, userId}: Props) => {
+const ProjectCard = ({ id, image, title, name, avatarUrl, userId }: Props) => {
     const [randomLikes, setRandomLikes] = useState(0);
     const [randomViews, setRandomViews] = useState('');
 
@@ -41,25 +41,25 @@ const ProjectCard = ({id, image, title, name, avatarUrl, userId}: Props) => {
 
             <div className="flexBetween w-full px-2 mt-3 font-semibold text-sm">
                 <Link href={`/profile/${userId}`}>
-                    <div className="flexCenter gap-2">
-                        <Image
-                            src={avatarUrl}
-                            width={24}
-                            height={24}
-                            className="rounded-full"
-                            alt="profile image"
-                        />
-                        <p>{name}</p>
-                    </div>
+                        <div className="flexCenter gap-2">
+                            <Image
+                                src={avatarUrl}
+                                width={24}
+                                height={24}
+                                className="rounded-full"
+                                alt="profile image"
+                            />
+                            <p>{name}</p>
+                        </div>               
                 </Link>
 
                 <div className="flexCenter gap-3">
                     <div className="flexCenter gap-2">
-                        <Image src="/hearth.svg" width={13} height={12} alt="heart"/>
+                        <Image src="/hearth.svg" width={13} height={12} alt="heart" />
                         <p className="text-sm">{randomLikes}</p>
                     </div>
                     <div className="flexCenter gap-2">
-                        <Image src="/eye.svg" width={12} height={9} alt="eye"/>
+                        <Image src="/eye.svg" width={12} height={9} alt="eye" />
                         <p className="text-sm">{randomViews}</p>
                     </div>
                 </div>
