@@ -4,6 +4,14 @@ import ProjectCard from "@/components/ProjectCard";
 import Categories from "@/components/Categories";
 import LoadMore from "@/components/LoadMore";
 
+type SearchParams = {
+    category?: string;
+    endCursor?: string;
+}
+
+type Props = {
+    searchParams: SearchParams;
+}
 type ProjectSearch = {
     projectSearch: {
         edges: { node: ProjectInterface }[];
@@ -14,14 +22,6 @@ type ProjectSearch = {
             endCursor: string;
         }
     }
-}
-type SearchParams = {
-    category?: string;
-    endCursor?: string;
-}
-
-type Props = {
-    searchParams: SearchParams;
 }
 
 export const dynamic = 'force-dynamic';
