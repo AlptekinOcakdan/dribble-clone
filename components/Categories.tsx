@@ -1,10 +1,12 @@
-"use client";
-
+"use client"
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
+import { categoryFilters } from "@/constants";
 
-import {categoryFilters} from "@/constants";
+type Props = {
+    filter?: string;
+};
 
-const Categories = () => {
+const Categories = ({ filter }: Props) => {
     const router = useRouter();
     const pathName = usePathname();
     const searchParams = useSearchParams();
@@ -18,18 +20,18 @@ const Categories = () => {
     return (
         <div className="flexBetween w-full gap-5 flex-wrap">
             <ul className="flex gap-2 overflow-auto">
-                {categoryFilters.map((filter) => (
+                {categoryFilters.map((item) => (
                     <button
-                        key={filter}
+                        key={item}
                         type="button"
-                        onClick={() => handleTags(filter)}
+                        onClick={() => handleTags(item)}
                         className={`${
-                            category === filter
+                            (filter && filter === item) || (category && category === item)
                                 ? "bg-light-white-300 font-medium"
                                 : "font-normal"
                         } px-4 py-3 rounded-lg capitalize whitespace-nowrap`}
                     >
-                        {filter}
+                        {item}
                     </button>
                 ))}
             </ul>
