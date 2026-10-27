@@ -5,7 +5,8 @@ import {getCurrentUser} from "@/lib/session";
 import {getProjectDetails} from "@/lib/actions";
 import {ProjectInterface} from "@/common.types";
 
-const EditProject = async ({params: {id}}: { params: { id: string } }) => {
+const EditProject = async (props: { params: Promise<{ id: string }> }) => {
+    const {id} = await props.params;
     const session = await getCurrentUser();
     if (!session?.user) redirect('/')
 
@@ -18,7 +19,7 @@ const EditProject = async ({params: {id}}: { params: { id: string } }) => {
     return (
         <Modal>
             <h3 className="modal-head-text">Edit Project</h3>
-            <ProjectForm type="create" session={session} project={result?.project}/>
+            <ProjectForm type="edit" session={session} project={result?.project}/>
         </Modal>
     );
 };

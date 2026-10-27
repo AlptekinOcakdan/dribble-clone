@@ -10,7 +10,7 @@ type SearchParams = {
 }
 
 type Props = {
-    searchParams: SearchParams
+    searchParams: Promise<SearchParams>
 }
 
 type ProjectSearch = {
@@ -29,7 +29,8 @@ export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
 export const revalidate = 0;
 
-const Home = async ({ searchParams: { category="Frontend", endcursor } }: Props) => {
+const Home = async (props: Props) => {
+    const { category = "Frontend", endcursor } = await props.searchParams;
     const data = await fetchAllProjects(category, endcursor) as ProjectSearch
 
     const projectsToDisplay = data?.projectSearch?.edges || [];
